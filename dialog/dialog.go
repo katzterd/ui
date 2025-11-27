@@ -10,10 +10,10 @@ import (
 	"github.com/go-telegram/bot/models"
 )
 
+type OnSelect func(ctx context.Context, bot *bot.Bot, update *models.Update)
 type OnErrorHandler func(err error)
 
 type Dialog struct {
-	data    []string
 	prefix  string
 	onError OnErrorHandler
 	nodes   []Node
@@ -33,9 +33,28 @@ func New(b *bot.Bot, nodes []Node, opts ...Option) *Dialog {
 		opt(p)
 	}
 
+	for _, node := range nodes {
+		for _, row := range node.Keyboard {
+			for _, btn := range row {
+				if btn.Handler != nil {
+					b.RegisterHandler(bot.HandlerTypeCallbackQueryData, p.prefix+btn.Name, bot.MatchTypePrefix, p.btnHandler(btn.Handler, btn.Goto))
+				}
+			}
+		}
+	}
+
 	p.callbackHandlerID = b.RegisterHandler(bot.HandlerTypeCallbackQueryData, p.prefix, bot.MatchTypePrefix, p.callback)
 
 	return p
+}
+
+func (d *Dialog) btnHandler(handler OnSelect, id string) bot.HandlerFunc {
+	return func(ctx context.Context, b *bot.Bot, update *models.Update) {
+		handler(ctx, b, update)
+		if id != "" {
+			d.navToNode(ctx, b, update, id)
+		}
+	}
 }
 
 // Prefix returns the prefix of the widget
@@ -58,10 +77,10 @@ func (d *Dialog) showNode(ctx context.Context, b *bot.Bot, chatID any, node Node
 	return b.SendMessage(ctx, params)
 }
 
-func (d *Dialog) Show(ctx context.Context, b *bot.Bot, chatID any, nodeID string) (*models.Message, error) {
-	node, ok := d.findNode(nodeID)
+func (d *Dialog) Show(ctx context.Context, b *bot.Bot, chatID any, Goto string) (*models.Message, error) {
+	node, ok := d.findNode(Goto)
 	if !ok {
-		return nil, fmt.Errorf("failed to find node with id %s", nodeID)
+		return nil, fmt.Errorf("failed to find node with id %s", Goto)
 	}
 
 	return d.showNode(ctx, b, chatID, node)
@@ -76,10 +95,14 @@ func (d *Dialog) callback(ctx context.Context, b *bot.Bot, update *models.Update
 		d.onError(fmt.Errorf("failed to answer callback query"))
 	}
 
-	nodeID := strings.TrimPrefix(update.CallbackQuery.Data, d.prefix)
-	node, ok := d.findNode(nodeID)
+	Goto := strings.TrimPrefix(update.CallbackQuery.Data, d.prefix)
+	d.navToNode(ctx, b, update, Goto)
+}
+
+func (d *Dialog) navToNode(ctx context.Context, b *bot.Bot, update *models.Update, id string) {
+	node, ok := d.findNode(id)
 	if !ok {
-		d.onError(fmt.Errorf("failed to find node with id %s", nodeID))
+		d.onError(fmt.Errorf("failed to find node with id %s", id))
 		return
 	}
 

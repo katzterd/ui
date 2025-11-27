@@ -5,9 +5,11 @@ import (
 )
 
 type Button struct {
-	Text   string
-	NodeID string
-	URL    string
+	Name    string
+	Text    string
+	Goto    string
+	URL     string
+	Handler OnSelect
 }
 
 type Node struct {
@@ -31,8 +33,10 @@ func (n Node) buildKB(prefix string) models.ReplyMarkup {
 			}
 			if btn.URL != "" {
 				b.URL = btn.URL
+			} else if btn.Handler != nil {
+				b.CallbackData = prefix + btn.Name + btn.Goto
 			} else {
-				b.CallbackData = prefix + btn.NodeID
+				b.CallbackData = prefix + btn.Goto
 			}
 			kbRow = append(kbRow, b)
 		}
