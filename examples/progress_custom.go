@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-	"github.com/go-telegram/ui/progress"
+	"github.com/katzterd/ui/progress"
 )
 
 func handlerProgressCustom(ctx context.Context, b *bot.Bot, update *models.Update) {

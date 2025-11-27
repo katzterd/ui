@@ -1,5 +1,5 @@
-module github.com/go-telegram/ui
+module github.com/katzterd/ui
 
-go 1.20
+go 1.25.4
 
-require github.com/go-telegram/bot v1.14.0
+require github.com/go-telegram/bot v1.17.0

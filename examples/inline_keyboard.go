@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-	"github.com/go-telegram/ui/keyboard/inline"
+	"github.com/katzterd/ui/keyboard/inline"
 )
 
 var demoInlineKeyboard *inline.Keyboard

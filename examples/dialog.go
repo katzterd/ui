@@ -5,12 +5,12 @@ import (
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-	"github.com/go-telegram/ui/dialog"
+	"github.com/katzterd/ui/dialog"
 )
 
 var (
 	dialogNodes = []dialog.Node{
-		{ID: "start", Text: "Start Node", Keyboard: [][]dialog.Button{{{Text: "Go to node 2", Goto: "2"}, {Text: "Go to node 3", Goto: "3"}}, {{Text: "Go Telegram UI", URL: "https://github.com/go-telegram/ui"}}}},
+		{ID: "start", Text: "Start Node", Keyboard: [][]dialog.Button{{{Text: "Go to node 2", Goto: "2"}, {Text: "Go to node 3", Goto: "3"}}, {{Text: "Go Telegram UI", URL: "https://github.com/katzterd/ui"}}}},
 		{ID: "2", Text: "node 2 without keyboard"},
 		{ID: "3", Text: "node 3", Keyboard: [][]dialog.Button{
 			{{Text: "Go to start", Goto: "start"}, {Text: "Go to node 4", Goto: "4"}}}},

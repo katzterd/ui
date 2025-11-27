@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-	"github.com/go-telegram/ui/progress"
+	"github.com/katzterd/ui/progress"
 )
 
 var demoProgressSimple *progress.Progress
